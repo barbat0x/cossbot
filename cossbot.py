@@ -266,4 +266,60 @@ class CossBot():
         return True
 
 
+    def create_order(self, symbol, price, side, size, order_type, stop=None):
+        """Place a new order for order side(BUY/SELL),
+        and order type (market/limit)
+        
+        An order should at least contains symbol, price, side, size and type
+        params:
+            {
+            "order_symbol": "ETH_BTC",
+            "order_price": "1.00234567",
+            "stop_price": "1.20134555",
+            "order_side": "BUY",
+            "order_size": "1000",
+            "type": "limit",
+            "timestamp": 1538114348750,
+            "recvWindow": 5000
+            }
+
+        returns : all informations about the order
+        """
+
+        if not symbol or not price or not side or not size or not size:
+            print("missing values")
+
+        timestamp = time.time() * 1000
+        print(timestamp, type(timestamp))
+
+        order_symbol = str(symbol)
+        order_price = str(price)
+        order_side = str(side).upper()
+        order_size = str(size)
+        order_type = str(order_type).lower()
+        order_stop = str(stop) if stop else None
+
+        data = {
+            "order_symbol": order_symbol,
+            "order_price": order_price,
+            "order_side": order_side.upper(),
+            "order_size": order_size,
+            "type": order_type.lower(),
+            "timetamp": timestamp,
+        }
+
+        if order_stop:
+            data['order_stop'] = order_stop
+
+        payload = {"timestamp": timestamp}
+        signature = self.sign(payload)
+
+        if signature:
+            self.order_headers['signature'] = signature
+            request = self.s.post(self.TRADE_URL + "/order/add", headers=self.order_headers, data=data)
+            return request.content
+
+        return False
+
+
     

@@ -9,7 +9,8 @@ def main():
     #print(bot.get_exchange_information())
     #print(bot.test_api_connection())
     #print(bot.test_connection_server_time())
-    print(bot.get_account_balance())
+    #print(bot.get_account_balance())
+    print(bot.create_order(None, None, None, None, None))
 
 if __name__ == "__main__":
     # execute only if run as a script
