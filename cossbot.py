@@ -31,8 +31,6 @@ class CossBot():
                 print(e)
                 return False
 
-        print(payload)
-
         try:
             signature = hmac.new(self.API_SECRET, payload.encode('utf8'), hashlib.sha256).hexdigest()
         except Exception as e:
@@ -329,10 +327,55 @@ class CossBot():
 
         if signature:
             self.order_headers['Signature'] = signature
-            request = self.s.post(self.TRADE_URL + "/order/add", data=payload, headers=self.order_headers).json()
+            request = self.s.post(self.TRADE_URL + "/order/add",
+                                  data=payload,
+                                  headers=self.order_headers).json()
             return request
 
         return False
+
+    
+    def delete_order(self, order_id, symbol):
+        """Delete an open order
+
+        params:
+            {
+                "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4e7",
+                "order_symbol": "ETH_BTC",
+                "timestamp": 1538114348750,
+                "recvWindow": 5000
+            }
+
+        returns:
+            {
+                "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4x7",
+                "order_symbol": "ETH_BTC"
+            }
+        """
+
+        if order_id is None or symbol is None:
+            print("missing values")
+
+        order_id = str(order_id)
+        order_symbol = str(symbol)
+        timestamp = int(time.time() * 1000)
+
+        payload = json.dumps({
+            "order_id": "960a2fd3-ca09-4f69-bc6f-15b21e7dbdb0",
+            "order_symbol": "COS_ETH",
+            "timestamp": timestamp
+        })
+
+        signature = self.sign(payload)
+
+        if signature:
+            self.order_headers["Signature"] = signature
+            request = self.s.delete(self.TRADE_URL + "/order/cancel",
+                                  data=payload,
+                                  headers=self.order_headers).json()
+            return request
+
+
 
 
     
