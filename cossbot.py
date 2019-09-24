@@ -22,11 +22,19 @@ class CossBot():
         self.s = requests.Session()
 
     
-    def sign(self, payload):
+    def sign(self, payload, get=None):
+
+        if get:
+            try:
+                payload = urllib.parse.urlencode(payload)
+            except Exception as e:
+                print(e)
+                return False
+
+        print(payload)
 
         try:
-            qs_payload = urllib.parse.urlencode(payload)
-            signature = hmac.new(self.API_SECRET, qs_payload.encode('utf8'), hashlib.sha256).hexdigest()
+            signature = hmac.new(self.API_SECRET, payload.encode('utf8'), hashlib.sha256).hexdigest()
         except Exception as e:
             print(e)
             return False
@@ -227,7 +235,7 @@ class CossBot():
         """
 
         payload = {"timestamp": int(time.time() * 1000)}
-        signature = self.sign(payload)
+        signature = self.sign(payload, get=True)
 
         if signature:
             self.order_headers['Signature'] = signature
@@ -254,7 +262,7 @@ class CossBot():
         """
 
         payload = {"timestamp": int(time.time() * 1000)}
-        signature = self.sign(payload)
+        signature = self.sign(payload, get=True)
 
         if signature:
             self.order_headers['Signature'] = signature
@@ -274,8 +282,8 @@ class CossBot():
         params:
             {
             "order_symbol": "ETH_BTC",
-            "order_price": "1.00234567",
-            "stop_price": "1.20134555",
+            "order_price": "0.00234567",
+            "stop_price": "0.20134555",
             "order_side": "BUY",
             "order_size": "1000",
             "type": "limit",
@@ -289,8 +297,7 @@ class CossBot():
         if not symbol or not price or not side or not size or not size:
             print("missing values")
 
-        timestamp = time.time() * 1000
-        print(timestamp, type(timestamp))
+        timestamp = int(time.time() * 1000)
 
         order_symbol = str(symbol)
         order_price = str(price)
@@ -299,25 +306,31 @@ class CossBot():
         order_type = str(order_type).lower()
         order_stop = str(stop) if stop else None
 
-        data = {
+        order_symbol = str("COS_ETH")
+        order_price = str("0.000351")
+        order_side = str("sell").upper()
+        order_size = str("1000")
+        order_type = str("limit").lower()
+        order_stop = str(stop) if stop else None
+
+        payload = json.dumps({
             "order_symbol": order_symbol,
             "order_price": order_price,
             "order_side": order_side.upper(),
             "order_size": order_size,
             "type": order_type.lower(),
-            "timetamp": timestamp,
-        }
+            "timestamp": int(time.time() * 1000)
+        })
 
         if order_stop:
-            data['order_stop'] = order_stop
+            payload['order_stop'] = str(order_stop)
 
-        payload = {"timestamp": timestamp}
         signature = self.sign(payload)
 
         if signature:
-            self.order_headers['signature'] = signature
-            request = self.s.post(self.TRADE_URL + "/order/add", headers=self.order_headers, data=data)
-            return request.content
+            self.order_headers['Signature'] = signature
+            request = self.s.post(self.TRADE_URL + "/order/add", data=payload, headers=self.order_headers).json()
+            return request
 
         return False
 
