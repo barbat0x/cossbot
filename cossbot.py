@@ -361,7 +361,7 @@ class CossBot():
         timestamp = int(time.time() * 1000)
 
         payload = json.dumps({
-            "order_id": "960a2fd3-ca09-4f69-bc6f-15b21e7dbdb0",
+            "order_id": "9d14d545-62c4-436d-a1de-2b908e554a82",
             "order_symbol": "COS_ETH",
             "timestamp": timestamp
         })
@@ -371,6 +371,49 @@ class CossBot():
         if signature:
             self.order_headers["Signature"] = signature
             request = self.s.delete(self.TRADE_URL + "/order/cancel",
+                                  data=payload,
+                                  headers=self.order_headers).json()
+            return request
+
+    
+    def get_order_detail(self, order_id):
+        """Get order detail for a specific order
+
+        params:
+            {
+                "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1cxyz",
+                "timestamp": 1538114348750,
+                "recvWindow": 5000
+            }
+
+        returns:
+            {
+                "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4ty",
+                "account_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4a6",
+                "order_symbol": "ETH_BTC",
+                "order_side": "BUY",
+                "status": "OPEN",
+                "createTime": 1538114348750,
+                "type": "limit",
+                "order_price": "0.12345678",
+                "order_size": "10.12345678",
+                "executed": "0",
+                "stop_price": "02.12345678",
+                "avg": "1.12345678",
+                "total": "2.12345678"
+            }
+        """
+
+        payload = json.dumps({
+            "order_id": str("9d14d545-62c4-436d-a1de-2b908e554a82"),
+            "timestamp": int(time.time() * 1000)
+        })
+
+        signature = self.sign(payload)
+
+        if signature:
+            self.order_headers['Signature'] = signature
+            request = self.s.post(self.TRADE_URL + "/order/details",
                                   data=payload,
                                   headers=self.order_headers).json()
             return request
