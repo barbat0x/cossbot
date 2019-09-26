@@ -405,7 +405,7 @@ class CossBot():
         """
 
         payload = json.dumps({
-            "order_id": str("9d14d545-62c4-436d-a1de-2b908e554a82"),
+            "order_id": str("c1cc2ed6-ce49-446c-a881-82a03aa04779"),
             "timestamp": int(time.time() * 1000)
         })
 
@@ -418,6 +418,144 @@ class CossBot():
                                   headers=self.order_headers).json()
             return request
 
+
+    def get_order_trade_detail(self, order_id):
+        """Get order trade detail for a specific order
+
+        params:
+            {
+                "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1cxyz",
+                "timestamp": 1538114348750,
+                "recvWindow": 5000
+            }
+
+        returns:
+            {
+                "hex_id": "6e34eb38892faf4c3528ab89",
+                "symbol": "COSS_ETH",
+                "order_id": "08098534-ae65-452e-9a84-5b79a5160b5g",
+                "order_side": "BUY",
+                "price": "0.00064600",
+                "quantity": "10",
+                "fee": "0.00700000 COSS",
+                "total": "0.00646000 ETH",
+                "timestamp": 1545196121361
+            }
+        """
+
+        payload = json.dumps({
+            "order_id": str("c1cc2ed6-ce49-446c-a881-82a03aa04779"),
+            "timestamp": int(time.time() * 1000),
+        })
+
+        signature = self.sign(payload)
+
+        if signature:
+            self.order_headers['Signature'] = signature
+            request = self.s.post(self.TRADE_URL + "/order/trade-detail",
+                                  data=payload,
+                                  headers=self.order_headers).json()
+            return request
+
+
+    def get_open_order_list(self, symbol):
+        """Get open order list for a given symbol
+
+        params:
+            {
+                "limit": 10,
+                "page": 0,
+                "symbol": "ETH_BTC",
+                "timestamp": 1429514463299,
+                "recvWindow": 5000
+            }
+
+        returns:
+            {
+                "total": 2,
+                "list": [
+                    {
+                        "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4ty",
+                        "account_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4a6",
+                        "order_symbol": "ETH_BTC",
+                        "order_side": "BUY",
+                        "status": "OPEN",
+                        "createTime": 1538114348750,
+                        "type": "limit",
+                        "order_price": "0.12345678",
+                        "order_size": "10.12345678",
+                        "executed": "0",
+                        "stop_price": "02.12345678",
+                        "avg": "1.12345678",
+                        "total": "2.12345678"
+                    }
+                ]
+            }
+        """
+
+        payload = json.dumps({
+            "symbol": str("COS_ETH"),
+            "timestamp": int(time.time() * 1000)
+        })
+
+        signature = self.sign(payload)
+
+        if signature:
+            self.order_headers['Signature'] = signature
+            request = self.s.post(self.TRADE_URL + "/order/list/open",
+                                  data=payload,
+                                  headers=self.order_headers).json()
+            return request
+
+
+    def get_completed_order_list(self, symbol):
+        """Get completed order list for a given symbol
+
+        params:
+            {
+                "limit": 10,
+                "page": 0,
+                "symbol": "ETH_BTC",
+                "timestamp": 1429514463299,
+                "recvWindow": 5000
+            }
+
+        returns:
+            {
+                "total": 2,
+                "list": [
+                    {
+                    "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4ty",
+                    "account_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4a6",
+                    "order_symbol": "ETH_BTC",
+                    "order_side": "BUY",
+                    "status": "OPEN",
+                    "createTime": 1538114348750,
+                    "type": "limit",
+                    "order_price": "0.12345678",
+                    "order_size": "10.12345678",
+                    "executed": "0",
+                    "stop_price": "02.12345678",
+                    "avg": "1.12345678",
+                    "total": "2.12345678"
+                    }
+                ]
+            }
+        """
+
+        payload = json.dumps({
+            "symbol": str("COS_ETH"),
+            "timestamp": int(time.time() * 1000)
+        })
+
+        signature = self.sign(payload)
+
+        if signature:
+            self.order_headers['Signature'] = signature
+            request = self.s.post(self.TRADE_URL + "/order/list/completed",
+                                  data=payload,
+                                  headers=self.order_headers).json()
+            return request
 
 
 

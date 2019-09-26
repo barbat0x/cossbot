@@ -11,8 +11,11 @@ def main():
     #print(bot.test_connection_server_time())
     #print(bot.get_account_balance())
     #print(bot.create_order(None, None, None, None, None))
-    print(bot.delete_order(None, None))
+    #print(bot.delete_order(None, None))
     #print(bot.get_order_detail(None))
+    #print(bot.get_order_trade_detail(None))
+    #print(bot.get_open_order_list(None))
+    #print(bot.get_completed_order_list(None))
 
 if __name__ == "__main__":
     # execute only if run as a script
