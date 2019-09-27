@@ -16,6 +16,7 @@ def main():
     #print(bot.get_order_trade_detail(None))
     #print(bot.get_open_order_list(None))
     #print(bot.get_completed_order_list(None))
+    print(bot.get_all_order_list("COS_ETH"))
 
 if __name__ == "__main__":
     # execute only if run as a script

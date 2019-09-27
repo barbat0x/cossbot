@@ -558,5 +558,58 @@ class CossBot():
             return request
 
 
+    def get_all_order_list(self, symbol, from_id=None, limit=None):
+        """Get the list of all orders for a user
+
+        params:
+        {
+            "symbol": "ETH_BTC",
+            "from_id": "order id to fetch from",
+            "limit": "default and maximum is 50",
+            "timestamp": 1530682938651,
+            "recvWindow": 5000
+        }
+
+        returns:
+        [
+            {
+                "order_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4ty",
+                "account_id": "9e5ae4dd-3369-401d-81f5-dff985e1c4a6",
+                "order_symbol": "ETH_BTC",
+                "order_side": "BUY",
+                "status": "OPEN",
+                "createTime": 1538114348750,
+                "type": "limit",
+                "order_price": "0.12345678",
+                "order_size": "10.12345678",
+                "executed": "0",
+                "stop_price": "02.12345678",
+                "avg": "1.12345678",
+                "total": "2.12345678"
+            }
+        ]
+        """
+
+        payload = json.dumps({
+            "symbol": str(symbol),
+            "timestamp": int(time.time() * 1000),
+        })
+
+        if from_id:
+            payload["from_id"] = str(from_id)
+        
+        if limit:
+            payload["limit"] = str(limit)
+
+        signature = self.sign(payload)
+
+        if signature:
+            self.order_headers['Signature'] = signature
+            request = self.s.post(self.TRADE_URL + "/order/list/all",
+                                  data=payload,
+                                  headers=self.order_headers).json()
+            return request
+
+
 
     
